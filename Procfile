@@ -1,1 +1,1 @@
-web: realtime-analytics
+web: realtime-analytics-feed
