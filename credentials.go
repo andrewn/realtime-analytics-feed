@@ -2,6 +2,7 @@ package realtime
 
 import (
   "fmt"
+  "os"
   "io/ioutil"
   "golang.org/x/oauth2"
   "golang.org/x/oauth2/google"
@@ -11,11 +12,12 @@ import (
 // https://godoc.org/google.golang.org/api/analytics/v3
 func CreateAnalyticsCall() (realtimeServiceGetCall *analytics.DataRealtimeGetCall) {
   scope := "https://www.googleapis.com/auth/analytics.readonly"
-
-  raw, err := ioutil.ReadFile("./credentials.json")
   
-  if err != nil {
-    fmt.Println(err)
+  raw, hasCredentials := GetCredentialsFromEnv()
+  
+  if hasCredentials == false {
+    fmt.Println("Fetch credentials from file")
+    raw = GetCredentialsFromFile()
   }
   
   conf, err := google.JWTConfigFromJSON(raw, scope)
@@ -36,6 +38,29 @@ func CreateAnalyticsCall() (realtimeServiceGetCall *analytics.DataRealtimeGetCal
   
   realtimeServiceGetCall = realtimeService.Get("ga:25221044", "rt:activeUsers")
   realtimeServiceGetCall.Dimensions("rt:pagePath")
+  
+  return
+}
+
+
+func GetCredentialsFromEnv() (raw []byte, hasCredentials bool) {
+  str := os.Getenv("CREDENTIALS_JSON")
+  hasCredentials = false
+  
+  if str != "" {
+    hasCredentials = true
+    raw = []byte(str)
+  }
+  
+  return
+}
+
+func GetCredentialsFromFile() (raw []byte) {
+  raw, err := ioutil.ReadFile("./credentials.json")
+  
+  if err != nil {
+    fmt.Println(err)
+  }
   
   return
 }
