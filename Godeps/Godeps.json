@@ -1,10 +1,7 @@
 {
-	"ImportPath": "github.com/andrewn/realtime-analytics",
+	"ImportPath": "github.com/andrewn/realtime-analytics-feed",
 	"GoVersion": "go1.6",
 	"GodepVersion": "v67",
-	"Packages": [
-		"./..."
-	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/golang/protobuf/proto",
