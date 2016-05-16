@@ -1,13 +1,41 @@
 {
 	"ImportPath": "github.com/andrewn/realtime-analytics",
-	"GoVersion": "go1.6.2",
+	"GoVersion": "go1.6",
+	"GodepVersion": "v67",
+	"Packages": [
+		"./..."
+	],
 	"Deps": [
+		{
+			"ImportPath": "github.com/golang/protobuf/proto",
+			"Rev": "8d92cf5fc15a4382f8964b08e1f42a75c0591aa3"
+		},
 		{
 			"ImportPath": "golang.org/x/net/context",
 			"Rev": "cb0ed7acc4f717d79a358093419e5a7da09b8b45"
 		},
 		{
+			"ImportPath": "golang.org/x/net/context/ctxhttp",
+			"Rev": "cb0ed7acc4f717d79a358093419e5a7da09b8b45"
+		},
+		{
 			"ImportPath": "golang.org/x/oauth2",
+			"Rev": "e86e2718db89775a4604abc10a5d3a5672e7336e"
+		},
+		{
+			"ImportPath": "golang.org/x/oauth2/google",
+			"Rev": "e86e2718db89775a4604abc10a5d3a5672e7336e"
+		},
+		{
+			"ImportPath": "golang.org/x/oauth2/internal",
+			"Rev": "e86e2718db89775a4604abc10a5d3a5672e7336e"
+		},
+		{
+			"ImportPath": "golang.org/x/oauth2/jws",
+			"Rev": "e86e2718db89775a4604abc10a5d3a5672e7336e"
+		},
+		{
+			"ImportPath": "golang.org/x/oauth2/jwt",
 			"Rev": "e86e2718db89775a4604abc10a5d3a5672e7336e"
 		},
 		{
@@ -21,6 +49,42 @@
 		{
 			"ImportPath": "google.golang.org/api/googleapi",
 			"Rev": "4300f6b0c8a7f09e521dd0af2cee27e28846e037"
+		},
+		{
+			"ImportPath": "google.golang.org/api/googleapi/internal/uritemplates",
+			"Rev": "4300f6b0c8a7f09e521dd0af2cee27e28846e037"
+		},
+		{
+			"ImportPath": "google.golang.org/appengine",
+			"Rev": "e234e71924d4aa52444bc76f2f831f13fa1eca60"
+		},
+		{
+			"ImportPath": "google.golang.org/appengine/internal",
+			"Rev": "e234e71924d4aa52444bc76f2f831f13fa1eca60"
+		},
+		{
+			"ImportPath": "google.golang.org/appengine/internal/app_identity",
+			"Rev": "e234e71924d4aa52444bc76f2f831f13fa1eca60"
+		},
+		{
+			"ImportPath": "google.golang.org/appengine/internal/base",
+			"Rev": "e234e71924d4aa52444bc76f2f831f13fa1eca60"
+		},
+		{
+			"ImportPath": "google.golang.org/appengine/internal/datastore",
+			"Rev": "e234e71924d4aa52444bc76f2f831f13fa1eca60"
+		},
+		{
+			"ImportPath": "google.golang.org/appengine/internal/log",
+			"Rev": "e234e71924d4aa52444bc76f2f831f13fa1eca60"
+		},
+		{
+			"ImportPath": "google.golang.org/appengine/internal/modules",
+			"Rev": "e234e71924d4aa52444bc76f2f831f13fa1eca60"
+		},
+		{
+			"ImportPath": "google.golang.org/appengine/internal/remote_api",
+			"Rev": "e234e71924d4aa52444bc76f2f831f13fa1eca60"
 		},
 		{
 			"ImportPath": "google.golang.org/cloud/compute/metadata",
