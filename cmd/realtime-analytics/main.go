@@ -42,8 +42,10 @@ func main() {
 		}
 	}()
 
-	log.Println("Listen on port", port)
+	listenOn := ":"+port
+	
+	log.Println("Listen on port", listenOn)
 
-	log.Fatal("HTTP server error: ", http.ListenAndServe("localhost:"+port, broker))
+	log.Fatal("HTTP server error: ", http.ListenAndServe(listenOn, broker))
 
 }
