@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	log.Printf("main")
+	log.Printf("Starting realtime-analytics main")
 	
 	port := os.Getenv("PORT")
 	
