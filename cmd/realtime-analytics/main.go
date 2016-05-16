@@ -7,11 +7,11 @@ import (
 	"time"
 	"net/http"
 	"fmt"
-	"github.com/andrewn/realtime-analytics"
+	"github.com/andrewn/realtime-analytics-feed"
 )
 
 func main() {
-	log.Printf("Starting realtime-analytics main")
+	log.Printf("Starting realtime-analytics-feed main")
 	
 	port := os.Getenv("PORT")
 	
@@ -21,7 +21,7 @@ func main() {
 
 	broker := realtime.NewServer()
 	analytics := realtime.NewAnalytics()
-	
+
 	
 	go func() {
 		for {
