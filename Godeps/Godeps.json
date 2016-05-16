@@ -1,0 +1,34 @@
+{
+	"ImportPath": "github.com/andrewn/realtime-analytics",
+	"GoVersion": "go1.6.2",
+	"Deps": [
+		{
+			"ImportPath": "golang.org/x/net/context",
+			"Rev": "cb0ed7acc4f717d79a358093419e5a7da09b8b45"
+		},
+		{
+			"ImportPath": "golang.org/x/oauth2",
+			"Rev": "e86e2718db89775a4604abc10a5d3a5672e7336e"
+		},
+		{
+			"ImportPath": "google.golang.org/api/analytics/v3",
+			"Rev": "4300f6b0c8a7f09e521dd0af2cee27e28846e037"
+		},
+		{
+			"ImportPath": "google.golang.org/api/gensupport",
+			"Rev": "4300f6b0c8a7f09e521dd0af2cee27e28846e037"
+		},
+		{
+			"ImportPath": "google.golang.org/api/googleapi",
+			"Rev": "4300f6b0c8a7f09e521dd0af2cee27e28846e037"
+		},
+		{
+			"ImportPath": "google.golang.org/cloud/compute/metadata",
+			"Rev": "ed0cb07e5fc4f6936e6e9d523568808f93228351"
+		},
+		{
+			"ImportPath": "google.golang.org/cloud/internal",
+			"Rev": "ed0cb07e5fc4f6936e6e9d523568808f93228351"
+		}
+	]
+}
