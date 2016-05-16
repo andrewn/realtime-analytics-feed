@@ -85,6 +85,8 @@ func (broker *Broker) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 }
 
 func (broker *Broker) listen() {
+	var lastEvent []byte
+	
 	for {
 		select {
 		case s := <-broker.newClients:
@@ -93,6 +95,10 @@ func (broker *Broker) listen() {
 			// Register their message channel
 			broker.clients[s] = true
 			log.Printf("Client added. %d registered clients", len(broker.clients))
+			
+			// Send lastEvent to newly connected client
+			s <- lastEvent
+			
 		case s := <-broker.closingClients:
 
 			// A client has dettached and we want to
@@ -100,7 +106,7 @@ func (broker *Broker) listen() {
 			delete(broker.clients, s)
 			log.Printf("Removed client. %d registered clients", len(broker.clients))
 		case event := <-broker.Notifier:
-
+			lastEvent = event
 			// We got a new event from the outside!
 			// Send event to all connected clients
 			for clientMessageChan, _ := range broker.clients {
