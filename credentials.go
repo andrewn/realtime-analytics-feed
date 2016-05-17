@@ -13,6 +13,13 @@ import (
 func CreateAnalyticsCall() (realtimeServiceGetCall *analytics.DataRealtimeGetCall) {
   scope := "https://www.googleapis.com/auth/analytics.readonly"
   
+  gaId := os.Getenv("GA_ID")
+  
+  if gaId == "" {
+    fmt.Println("GA_ID not set")
+    os.Exit(1)
+  }
+  
   raw, hasCredentials := GetCredentialsFromEnv()
   
   if hasCredentials == false {
@@ -36,7 +43,7 @@ func CreateAnalyticsCall() (realtimeServiceGetCall *analytics.DataRealtimeGetCal
   
   realtimeService := analytics.NewDataRealtimeService(analyticsService)
   
-  realtimeServiceGetCall = realtimeService.Get("ga:25221044", "rt:activeUsers")
+  realtimeServiceGetCall = realtimeService.Get(gaId, "rt:activeUsers")
   realtimeServiceGetCall.Dimensions("rt:pagePath")
   
   return
