@@ -7,7 +7,7 @@ Google Analytics API credentials are supplied by a JSON file that contains the p
 
 0. Request beta access to the [Analytics Real Time Reporting API](https://developers.google.com/analytics/devguides/reporting/realtime/v3/).
 1. [Create a Service Account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount#creatinganaccount) for this application. The end result is a JSON file that's downloaded to you local machine.
-2. In the Goolge Analytics Admin interface, add the `client_email` email address as a user to your Analytics account. This will give this application access to the API.
+2. In the Google Analytics Admin interface, add the `client_email` email address as a user to your Analytics account. This will give this application access to the API.
 3. The JSON file can either be added as `credentials.json` in this directory or supplied as an environment variables called `CREDENTIALS_JSON` when starting the app.
 
 Deploy to Heroku
