@@ -17,6 +17,7 @@ You can deploy this app to Heroku.
 
      heroku create
      git push -i heroku master
+     heroku config:set GA_ID="ga:12345678"
      heroku config:set CREDENTIALS_JSON="`cat credentials.json`"
      
 Visiting your heroku app URL should show the data being pushed.
