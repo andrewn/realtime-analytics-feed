@@ -111,10 +111,16 @@ func (broker *Broker) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// * precludes HTTP authorization so we explicitly allow Origin
+	// supplied by client
+	// rw.Header().Set("Access-Control-Allow-Origin", "*")
+	if req.Header.Get("Origin") != "" {
+		rw.Header().Set("Access-Control-Allow-Origin", req.Header.Get("Origin"))
+	}
+
 	rw.Header().Set("Content-Type", "text/event-stream")
 	rw.Header().Set("Cache-Control", "no-cache")
 	rw.Header().Set("Connection", "keep-alive")
-	rw.Header().Set("Access-Control-Allow-Origin", "*")
 
 	// Each connection registers its own message channel with the Broker's connections registry
 	messageChan := make(chan []byte)
