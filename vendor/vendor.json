@@ -1,9 +1,11 @@
 {
 	"comment": "",
-	"ignore": "test",
 	"heroku": {
-        "install" : [ "./cmd/..." ]
+		"install": [
+			"./cmd/..."
+		]
 	},
+	"ignore": "test",
 	"package": [
 		{
 			"checksumSHA1": "QtAbHtHmDzcf6vOV9eqlCpKgjiw=",
