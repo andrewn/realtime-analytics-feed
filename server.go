@@ -66,20 +66,32 @@ func bearerTokenFromHeader(header string) (token string) {
 	return
 }
 
+func (broker *Broker) getCredentials() (user, pass string) {
+	user = broker.authConfig.BasicAuthUser
+	pass = broker.authConfig.BasicAuthPass
+	// token := broker.authConfig.BearerToken
+	return
+}
+
+func (broker *Broker) hasAuthConfig() (hasAuthConfig bool) {
+	user, pass := broker.getCredentials()
+	hasNoBasicAuthConfig := user == "" && pass == ""
+	// hasNoBearerTokenConfig := token == ""
+	hasAuthConfig = !hasNoBasicAuthConfig
+	return
+}
+
 func (broker *Broker) IsAuthorised(req *http.Request) (isAuthorised bool) {
 	isAuthorised = false
 
-	user := broker.authConfig.BasicAuthUser
-	pass := broker.authConfig.BasicAuthPass
-	// token := broker.authConfig.BearerToken
-
-	hasNoBasicAuthConfig := user == "" && pass == ""
-	// hasNoBearerTokenConfig := token == ""
-
-	if hasNoBasicAuthConfig /* && hasNoBearerTokenConfig */ {
+	if !broker.hasAuthConfig() /* && hasNoBearerTokenConfig */ {
 		isAuthorised = true
 	} else {
+		user, pass := broker.getCredentials()
+
 		suppliedUser, suppliedPass, _ := req.BasicAuth()
+
+		fmt.Println("suppliedUser, suppliedPass", suppliedUser, suppliedPass)
 
 		// suppliedToken := bearerTokenFromRequest(req)
 
@@ -99,16 +111,24 @@ func (broker *Broker) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	//
 	flusher, ok := rw.(http.Flusher)
 
-	isAuthorised := broker.IsAuthorised(req)
-
-	if !isAuthorised {
-		http.Error(rw, "Incorrect credentials", http.StatusUnauthorized)
-		return
-	}
-
 	if !ok {
 		http.Error(rw, "Streaming unsupported!", http.StatusInternalServerError)
 		return
+	}
+
+	rw.Header().Set("Content-Type", "text/event-stream")
+	rw.Header().Set("Cache-Control", "no-cache")
+	rw.Header().Set("Connection", "keep-alive")
+
+	// Respond to CORS pre-flight request
+	if req.Method == "OPTIONS" && req.Header.Get("Origin") != "" {
+		fmt.Println("Is OPTIONS request with Origin")
+		rw.Header().Set("Access-Control-Allow-Origin", req.Header.Get("Origin"))
+		return
+	}
+
+	if broker.hasAuthConfig() {
+		rw.Header().Set("Access-Control-Allow-Credentials", "true")
 	}
 
 	// * precludes HTTP authorization so we explicitly allow Origin
@@ -118,9 +138,15 @@ func (broker *Broker) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		rw.Header().Set("Access-Control-Allow-Origin", req.Header.Get("Origin"))
 	}
 
-	rw.Header().Set("Content-Type", "text/event-stream")
-	rw.Header().Set("Cache-Control", "no-cache")
-	rw.Header().Set("Connection", "keep-alive")
+	isAuthorised := broker.IsAuthorised(req)
+
+	fmt.Println("isAuthorised", isAuthorised)
+
+	if !isAuthorised {
+		rw.Header().Set("WWW-Authenticate", "Basic realm=\"realtime\"")
+		http.Error(rw, "Incorrect credentials", http.StatusUnauthorized)
+		return
+	}
 
 	// Each connection registers its own message channel with the Broker's connections registry
 	messageChan := make(chan []byte)
