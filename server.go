@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"regexp"
 )
 
 type Broker struct {
@@ -19,19 +20,75 @@ type Broker struct {
 
 	// Client connections registry
 	clients map[chan []byte]bool
+
+	// auth config
+	authConfig AuthConfig
 }
 
-func NewServer() (broker *Broker) {
+type AuthConfig struct {
+	BasicAuthUser string
+	BasicAuthPass string
+	BearerToken   string
+}
+
+func NewServer(auth AuthConfig) (broker *Broker) {
 	// Instantiate a broker
 	broker = &Broker{
 		Notifier:       make(chan []byte, 1),
 		newClients:     make(chan chan []byte),
 		closingClients: make(chan chan []byte),
 		clients:        make(map[chan []byte]bool),
+		authConfig:			auth,
 	}
 
 	// Set it running - listening and broadcasting events
 	go broker.listen()
+
+	return
+}
+
+func bearerTokenFromRequest(req *http.Request) (token string) {
+	header := req.Header["Authorization"]
+
+	if len(header) > 0 {
+		return bearerTokenFromHeader(header[0])
+	} else {
+		return ""
+	}
+}
+
+func bearerTokenFromHeader(header string) (token string) {
+	r, _ := regexp.Compile("Bearer +(\\S+)")
+	matches := r.FindStringSubmatch(header)
+	if len(matches) > 0 {
+		token = matches[1]
+	}
+	return
+}
+
+func (broker *Broker) IsAuthorised(req *http.Request) (isAuthorised bool) {
+	isAuthorised = false
+
+	user := broker.authConfig.BasicAuthUser
+	pass := broker.authConfig.BasicAuthPass
+	// token := broker.authConfig.BearerToken
+
+	hasNoBasicAuthConfig := user == "" && pass == ""
+	// hasNoBearerTokenConfig := token == ""
+
+	if hasNoBasicAuthConfig /* && hasNoBearerTokenConfig */ {
+		isAuthorised = true
+	} else {
+		suppliedUser, suppliedPass, _ := req.BasicAuth()
+
+		// suppliedToken := bearerTokenFromRequest(req)
+
+		if suppliedUser == user && suppliedPass == pass {
+			isAuthorised = true
+		} /*else if suppliedToken == token {
+			isAuthorised = true
+		}*/
+	}
 
 	return
 }
@@ -41,6 +98,13 @@ func (broker *Broker) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	// Make sure that the writer supports flushing.
 	//
 	flusher, ok := rw.(http.Flusher)
+
+	isAuthorised := broker.IsAuthorised(req)
+
+	if !isAuthorised {
+		http.Error(rw, "Incorrect credentials", http.StatusUnauthorized)
+		return
+	}
 
 	if !ok {
 		http.Error(rw, "Streaming unsupported!", http.StatusInternalServerError)

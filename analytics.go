@@ -29,5 +29,9 @@ func (analytics *Analytics) GetData() (response *analytics.RealtimeData) {
   log.Printf("Results %o", response.TotalResults)
   log.Printf("Rows %o", response.Rows)
   
+
+  log.Printf("Receive results %o", response.TotalResults)
+  // log.Printf("Rows %o", response.Rows)
+
   return
 }

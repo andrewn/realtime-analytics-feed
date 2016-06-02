@@ -10,6 +10,11 @@ Google Analytics API credentials are supplied by a JSON file that contains the p
 2. In the Google Analytics Admin interface, add the `client_email` email address as a user to your Analytics account. This will give this application access to the API.
 3. The JSON file can either be added as `credentials.json` in this directory or supplied as an environment variables called `CREDENTIALS_JSON` when starting the app.
 
+Authorization
+---
+
+Set the AUTH_BASIC_USER and AUTH_BASIC_PASS env vars to require a username and password to access the event stream.
+
 Deploy to Heroku
 ---
 
