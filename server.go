@@ -38,7 +38,7 @@ func NewServer(auth AuthConfig) (broker *Broker) {
 		newClients:     make(chan chan []byte),
 		closingClients: make(chan chan []byte),
 		clients:        make(map[chan []byte]bool),
-		authConfig:			auth,
+		authConfig:     auth,
 	}
 
 	// Set it running - listening and broadcasting events
@@ -150,7 +150,7 @@ func (broker *Broker) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 
 func (broker *Broker) listen() {
 	var lastEvent []byte
-	
+
 	for {
 		select {
 		case s := <-broker.newClients:
@@ -159,10 +159,10 @@ func (broker *Broker) listen() {
 			// Register their message channel
 			broker.clients[s] = true
 			log.Printf("Client added. %d registered clients", len(broker.clients))
-			
+
 			// Send lastEvent to newly connected client
 			s <- lastEvent
-			
+
 		case s := <-broker.closingClients:
 
 			// A client has dettached and we want to

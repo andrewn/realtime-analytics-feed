@@ -1,37 +1,33 @@
 package realtime
 
 import (
-  "log"
-  "fmt"
-  // "time"
-  analytics "google.golang.org/api/analytics/v3"
+	"fmt"
+	"log"
+	// "time"
+	analytics "google.golang.org/api/analytics/v3"
 )
 
 type Analytics struct {
-  get *analytics.DataRealtimeGetCall
+	get *analytics.DataRealtimeGetCall
 }
 
 func NewAnalytics() (analytics *Analytics) {
-  analytics = &Analytics{
-    get: CreateAnalyticsCall(),
-  }
-  
-  return
+	analytics = &Analytics{
+		get: CreateAnalyticsCall(),
+	}
+
+	return
 }
 
 func (analytics *Analytics) GetData() (response *analytics.RealtimeData) {
-  response, err := analytics.get.Do()
-  
-  if err != nil {
-    fmt.Println(err)
-  }
-  
-  log.Printf("Results %o", response.TotalResults)
-  log.Printf("Rows %o", response.Rows)
-  
+	response, err := analytics.get.Do()
 
-  log.Printf("Receive results %o", response.TotalResults)
-  // log.Printf("Rows %o", response.Rows)
+	if err != nil {
+		fmt.Println(err)
+	}
 
-  return
+	log.Printf("Receive results %o", response.TotalResults)
+	// log.Printf("Rows %o", response.Rows)
+
+	return
 }
