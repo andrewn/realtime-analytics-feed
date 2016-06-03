@@ -48,16 +48,38 @@ func NewServer(auth AuthConfig) (broker *Broker) {
 }
 
 func bearerTokenFromRequest(req *http.Request) (token string) {
+	token = bearerTokenFromAuthorizationHeader(req)
+
+	if token != "" {
+		return
+	}
+
+	token = bearerTokenFromQueryString(req)
+
+	return
+}
+
+func bearerTokenFromQueryString(req *http.Request) (token string) {
+	query := req.URL.Query()
+
+	if len(query["bearer"]) > 0 {
+		token = query["bearer"][0]
+	}
+
+	return
+}
+
+func bearerTokenFromAuthorizationHeader(req *http.Request) (token string) {
 	header := req.Header["Authorization"]
 
 	if len(header) > 0 {
-		return bearerTokenFromHeader(header[0])
-	} else {
-		return ""
+		return bearerTokenFromHeaderValue(header[0])
 	}
+
+	return
 }
 
-func bearerTokenFromHeader(header string) (token string) {
+func bearerTokenFromHeaderValue(header string) (token string) {
 	r, _ := regexp.Compile("Bearer +(\\S+)")
 	matches := r.FindStringSubmatch(header)
 	if len(matches) > 0 {
@@ -66,40 +88,67 @@ func bearerTokenFromHeader(header string) (token string) {
 	return
 }
 
-func (broker *Broker) getCredentials() (user, pass string) {
+func (broker *Broker) getCredentials() (user, pass, token string) {
 	user = broker.authConfig.BasicAuthUser
 	pass = broker.authConfig.BasicAuthPass
-	// token := broker.authConfig.BearerToken
+	token = broker.authConfig.BearerToken
 	return
 }
 
 func (broker *Broker) hasAuthConfig() (hasAuthConfig bool) {
-	user, pass := broker.getCredentials()
-	hasNoBasicAuthConfig := user == "" && pass == ""
-	// hasNoBearerTokenConfig := token == ""
-	hasAuthConfig = !hasNoBasicAuthConfig
+	user, pass, token := broker.getCredentials()
+	hasBasicAuthConfig := user != "" && pass != ""
+	hasBearerTokenConfig := token != ""
+	hasAuthConfig = hasBasicAuthConfig || hasBearerTokenConfig
+	return
+}
+
+func (broker *Broker) basicAuthMatch(suppliedUser, suppliedPass string, _ bool) (matches bool){
+	matches = false
+	user, pass, _ := broker.getCredentials()
+
+	if suppliedUser == "" || suppliedPass == "" {
+		return
+	}
+
+	if suppliedUser == user && suppliedPass == pass {
+		matches = true
+	}
+
+	return
+}
+
+func (broker *Broker) bearerTokenMatch(suppliedToken string) (matches bool){
+	matches = false
+	_, _, token := broker.getCredentials()
+
+	if suppliedToken == "" {
+		return
+	}
+
+	if suppliedToken == token {
+		matches = true
+	}
+
 	return
 }
 
 func (broker *Broker) IsAuthorised(req *http.Request) (isAuthorised bool) {
 	isAuthorised = false
 
-	if !broker.hasAuthConfig() /* && hasNoBearerTokenConfig */ {
+	fmt.Println("hasAuthConfig", broker.hasAuthConfig())
+
+	if !broker.hasAuthConfig() {
 		isAuthorised = true
 	} else {
-		user, pass := broker.getCredentials()
-
-		suppliedUser, suppliedPass, _ := req.BasicAuth()
-
-		fmt.Println("suppliedUser, suppliedPass", suppliedUser, suppliedPass)
-
-		// suppliedToken := bearerTokenFromRequest(req)
-
-		if suppliedUser == user && suppliedPass == pass {
+		if broker.basicAuthMatch(req.BasicAuth()) {
+			fmt.Println("basic auth credentials match")
 			isAuthorised = true
-		} /*else if suppliedToken == token {
+		} else if broker.bearerTokenMatch(bearerTokenFromRequest(req)) {
+			fmt.Println("bearer token matches")
 			isAuthorised = true
-		}*/
+		}
+		fmt.Println("isAuthorised", isAuthorised)
 	}
 
 	return

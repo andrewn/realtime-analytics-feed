@@ -22,7 +22,7 @@ func main() {
   authConfig := realtime.AuthConfig{
     BasicAuthUser: os.Getenv("AUTH_BASIC_USER"),
     BasicAuthPass: os.Getenv("AUTH_BASIC_PASS"),
-    // BearerToken: os.Getenv("AUTH_BEARER_TOKEN"),
+    BearerToken: os.Getenv("AUTH_BEARER_TOKEN"),
   }
 
 	broker := realtime.NewServer(authConfig)
